@@ -12,13 +12,13 @@ import ElementPlus from 'vite-plugin-element-plus'
 
 // https://vite.dev/config/
 export default defineConfig({
-   plugins: [
+  plugins: [
     vue(),
     AutoImport({
       resolvers: [ElementPlusResolver()],
     }),
     Components({
-      resolvers: [ElementPlusResolver({importStyle: "sass"})],
+      resolvers: [ElementPlusResolver({ importStyle: "sass" })],
     }),
   ],
   resolve: {
@@ -26,6 +26,17 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  // ========== 新增：开发服务器配置 ==========
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://pcapi-xiaotuxian-front-devtest.itheima.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  },
+  // ======================================
   css: {
     preprocessorOptions: {
       scss: {
