@@ -20,4 +20,6 @@ getCategoryAPI().then(res => {
 .test{
   color: $priceColor;
 }
+ 
+ 
 </style>

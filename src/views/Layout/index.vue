@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from "vue";
+import LayoutNav from './components/LayoutNav.vue'
+import LayoutHeader from './components/LayoutHeader.vue'
+import LayoutFooter from './components/LayoutFooter.vue'
 </script>
 
 <template>
-  <div class="container">我是首页</div>
-  <!-- 子路由组件在这里被渲染出来 -->
+  <LayoutNav />
+  <LayoutHeader />
   <RouterView />
+  <LayoutFooter />
 </template>
-
-<style scoped></style>
