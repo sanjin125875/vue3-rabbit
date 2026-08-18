@@ -9,9 +9,8 @@ getCategoryAPI().then(res => {
 </script>
 
 <template>
-  <div class="container">
-    <el-button type="primary">Primary</el-button>
-  </div>
+  <!-- 一级路由出口组件 -->
+  <RouterView />
 </template>
 
 <style scoped>
