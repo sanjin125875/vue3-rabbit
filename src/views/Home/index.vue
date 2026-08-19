@@ -15,11 +15,4 @@ import homePanel from './components/HomePanel.vue'
   <HomeNew />
   <HomeHot />
   <homeProduct />
-  <!-- 测试面板组件 -->
-  <homePanel>
-
-  </homePanel>
-  <homePanel>
-    
-  </homePanel>
 </template>
