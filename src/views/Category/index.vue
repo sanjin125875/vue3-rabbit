@@ -2,7 +2,7 @@
 import { onMounted, ref } from "vue";
 import axios from "axios";
 import { getTopCategoryAPI } from "@/apis/category";
-import { useRoute } from "vue-router";
+import { useRoute, onBeforeRouteUpdate } from "vue-router";
 import { watch } from "vue";
 import { getBannerAPI } from "@/apis/home";
 import GoodsItem from "../Home/components/GoodsItem.vue";
@@ -22,20 +22,26 @@ onMounted(() => getBanner());
 const route = useRoute();
 const topCategory = ref({});
 
-const getTopCategory = async () => {
-  const res = await getTopCategoryAPI(route.params.id);
+const getTopCategory = async (id = route.params.id) => {
+  const res = await getTopCategoryAPI(id);
   topCategory.value = res.result;
 };
 
-watch(
-  () => route.params.id,
-  (newId) => {
-    if (newId) {
-      getTopCategory();
-    }
-  },
-  { immediate: true },
-);
+// 期望在路由参数变化的时候，分类接口重新发送
+onBeforeRouteUpdate((to) => {
+  getTopCategory(to.params.id)
+})
+
+// onMounted(() => getTopCategory())
+// watch(
+//   () => route.params.id,
+//   (newId) => {
+//     if (newId) {
+//       getTopCategory();
+//     }
+//   },
+//   { immediate: true },
+// );
 </script>
 
 <template>

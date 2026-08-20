@@ -5,7 +5,7 @@ import axios from 'axios';
 
 <template>
   <!-- 一级路由出口组件 -->
-  <RouterView />
+  <RouterView  />
   <div class="test">
     test scss
   </div>
