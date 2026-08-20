@@ -4,6 +4,21 @@ import axios from 'axios'
 import { getTopCategoryAPI } from '@/apis/category';
 import { useRoute } from 'vue-router';
 import { watch } from 'vue';
+import { getBannerAPI } from '@/apis/home'
+
+// 获取banner
+const bannerList = ref([])
+
+const getBanner = async () => {
+  const res = await getBannerAPI({
+    distributionSite: '2'
+  })
+  console.log(res)
+  bannerList.value = res.result
+}
+
+onMounted(() => getBanner())
+
 const route = useRoute()  
 const topCategory = ref({})
 
@@ -33,6 +48,12 @@ watch(
           <el-breadcrumb-item >{{topCategory.name}}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
+      <!-- 实现轮播图 -->
+      <el-carousel height="500px">
+        <el-carousel-item v-for="item in bannerList" :key="item.id">
+          <img :src="item.imgUrl" alt="">
+        </el-carousel-item>
+      </el-carousel>
     </div>
   </div>
 </template>
