@@ -1,16 +1,8 @@
 <script setup>
-import { onMounted } from 'vue';
-import HomePanel from './HomePanel.vue';
-import {getNewAPI} from '@/apis/home.js'
-import { ref } from 'vue';
-const newList = ref([])
+import HomePanel from "./HomePanel.vue";
+import { useNews } from "../composables/useNews.js";
 
-const getNewList = async () => {
-    const res = await getNewAPI()
-    newList.value = res.result
-}
-
-onMounted(() => getNewList())
+const { newList } = useNews()
 </script>
 
 <template>
@@ -38,8 +30,7 @@ onMounted(() => getNewList())
   -->
 </template>
 
-
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .goods-list {
   display: flex;
   justify-content: space-between;
@@ -50,7 +41,7 @@ onMounted(() => getNewList())
     height: 406px;
 
     background: #f0f9f4;
-    transition: all .5s;
+    transition: all 0.5s;
 
     &:hover {
       transform: translate3d(0, -3px, 0);

@@ -1,7 +1,4 @@
 <script setup>
-import { getCategoryAPI } from '@/apis/layout';
-import { onMounted } from 'vue';
-import { ref } from 'vue';
 import { useCategoryStore } from '@/stores/category';
 
 // 使用pinia中的数据

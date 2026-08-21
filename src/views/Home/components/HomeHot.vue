@@ -1,18 +1,8 @@
 <script setup>
-import { onMounted } from 'vue';
-import HomePanel from './HomePanel.vue';
-import {getHotAPI} from '@/apis/home.js'
-import { ref } from 'vue';
-const hotList = ref([])
+import HomePanel from "./HomePanel.vue";
+import { useHot } from "../composables/useHot.js";
 
-const getHotList = async () => {
-    const res = await getHotAPI()
-    console.log(res);
-    
-    hotList.value = res.result
-}
-
-onMounted(() => getHotList())
+const { hotList } = useHot();
 </script>
 
 <template>
@@ -30,8 +20,7 @@ onMounted(() => getHotList())
   </HomePanel>
 </template>
 
-
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .goods-list {
   display: flex;
   justify-content: space-between;
@@ -42,7 +31,7 @@ onMounted(() => getHotList())
     height: 406px;
 
     background: #f0f9f4;
-    transition: all .5s;
+    transition: all 0.5s;
 
     &:hover {
       transform: translate3d(0, -3px, 0);

@@ -1,19 +1,8 @@
 <script setup>
-import HomePanel from './HomePanel.vue'
-import { getGoodsAPI } from '@/apis/home.js';
-import { onMounted, ref } from 'vue';
-import axios from 'axios';
-import GoodsItem from './GoodsItem.vue';
-const goodsProduct = ref([])
-
-const getGoodsList = async () => {
-    const res = await getGoodsAPI()
-    goodsProduct.value = res.result
-}
-
-onMounted(() => {
-  getGoodsList()
-})
+import HomePanel from "./HomePanel.vue";
+import GoodsItem from "./GoodsItem.vue";
+import { useGoods } from "../composables/useGoods.js";
+const { goodsProduct } = useGoods();
 </script>
 
 <template>
@@ -37,7 +26,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .home-product {
   background: #fff;
   margin-top: 20px;
