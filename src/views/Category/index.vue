@@ -1,47 +1,16 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import axios from "axios";
 import { getTopCategoryAPI } from "@/apis/category";
 import { useRoute, onBeforeRouteUpdate } from "vue-router";
 import { watch } from "vue";
 import { getBannerAPI } from "@/apis/home";
 import GoodsItem from "../Home/components/GoodsItem.vue";
-// 获取banner
-const bannerList = ref([]);
+import { useBanner } from "./composables/useBanner.js";
+import { useCategory } from "./composables/useCategory.js";
 
-const getBanner = async () => {
-  const res = await getBannerAPI({
-    distributionSite: "2",
-  });
-  console.log(res);
-  bannerList.value = res.result;
-};
+const { bannerList } = useBanner();
 
-onMounted(() => getBanner());
-
-const route = useRoute();
-const topCategory = ref({});
-
-const getTopCategory = async (id = route.params.id) => {
-  const res = await getTopCategoryAPI(id);
-  topCategory.value = res.result;
-};
-
-// 期望在路由参数变化的时候，分类接口重新发送
-onBeforeRouteUpdate((to) => {
-  getTopCategory(to.params.id)
-})
-
-// onMounted(() => getTopCategory())
-// watch(
-//   () => route.params.id,
-//   (newId) => {
-//     if (newId) {
-//       getTopCategory();
-//     }
-//   },
-//   { immediate: true },
-// );
+const { topCategory } = useCategory();
 </script>
 
 <template>
