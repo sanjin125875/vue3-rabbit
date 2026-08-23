@@ -1,5 +1,6 @@
 <script setup>
 import { useDetail } from '@/views/Detail/composables/useDetail'
+import DetailHot from './components/DetailHot.vue';
 
 const { goods } = useDetail()
 
@@ -99,7 +100,7 @@ const { goods } = useDetail()
             </div>
           </div>
           <div class="goods-footer">
-            <div class="goods-article">
+            <div class="goods-article" v-if="goods.details.pictures">
               <!-- 商品详情 -->
               <div class="goods-tabs">
                 <nav>
@@ -120,7 +121,8 @@ const { goods } = useDetail()
             </div>
             <!-- 24热榜+专题推荐 -->
             <div class="goods-aside">
-
+              <detail-hot />
+              <detail-hot />
             </div>
           </div>
         </div>
