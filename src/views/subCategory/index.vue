@@ -1,8 +1,29 @@
 <script setup>
 import { useSubCategory } from './composables/useSubCategory';
+import { onMounted, ref } from 'vue';
+import { getSubCategoryAPI } from '@/apis/category';
+import { useRoute } from 'vue-router';
+import GoodsItem from '../Home/components/GoodsItem.vue';
+const route = useRoute()
 
 const { categoryData } = useSubCategory()
 
+// 获取基础列表数据渲染
+const goodList = ref([])
+const reqData = ref({
+  categoryId: route.params.id,
+  page: 1,
+  pageSize: 20,
+  sortField: 'publishTime'
+})
+  
+const getGoodList = async () => {
+  const res = await getSubCategoryAPI(reqData.value)
+  console.log(res)
+  goodList.value = res.result.items
+}
+  
+onMounted(() => getGoodList())
 </script>
 
 <template>
@@ -24,6 +45,7 @@ const { categoryData } = useSubCategory()
       </el-tabs>
       <div class="body">
          <!-- 商品列表-->
+        <GoodsItem v-for="goods in goodList" :goods="goods" :key="goods.id" />
       </div>
     </div>
   </div>
