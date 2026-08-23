@@ -1,8 +1,6 @@
 <script setup>
 import { useDetail } from '@/views/Detail/composables/useDetail'
 import DetailHot from './components/DetailHot.vue';
-import ImageView from '@/composables/imageView/index.vue'
-import XtxSku from '@/composables/XtxSku/index.vue'
 
 const { goods } = useDetail()
 
@@ -44,7 +42,7 @@ const skuChange = (sku) => {
           <div class="goods-info">
             <div class="media">
               <!-- 图片预览区 -->
-              <ImageView :image-list="goods.mainPictures" />
+              <XtxImageView :image-list="goods.mainPictures" />
               <!-- 统计数量 -->
               <ul class="goods-sales">
                 <li>
