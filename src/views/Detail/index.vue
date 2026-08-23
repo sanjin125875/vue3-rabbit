@@ -2,8 +2,14 @@
 import { useDetail } from '@/views/Detail/composables/useDetail'
 import DetailHot from './components/DetailHot.vue';
 import ImageView from '@/composables/imageView/index.vue'
+import XtxSku from '@/composables/XtxSku/index.vue'
+
 const { goods } = useDetail()
 
+const skuChange = (sku) => {
+  console.log(sku);
+  
+}
 
 </script>
 
@@ -87,7 +93,7 @@ const { goods } = useDetail()
                 </dl>
               </div>
               <!-- sku组件 -->
-
+              <XtxSku :goods="goods" @change="skuChange" />
               <!-- 数据组件 -->
 
               <!-- 按钮组件 -->
