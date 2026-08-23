@@ -1,7 +1,7 @@
 <script setup>
 import { useDetail } from '@/views/Detail/composables/useDetail'
 import DetailHot from './components/DetailHot.vue';
-
+import ImageView from '@/composables/imageView/index.vue'
 const { goods } = useDetail()
 
 
@@ -38,7 +38,7 @@ const { goods } = useDetail()
           <div class="goods-info">
             <div class="media">
               <!-- 图片预览区 -->
-
+              <ImageView />
               <!-- 统计数量 -->
               <ul class="goods-sales">
                 <li>
