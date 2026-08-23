@@ -23,6 +23,25 @@ const rules = {
     }
   ]
 }
+
+
+// 获取form实例
+const formRef = ref(null)
+
+const doLogin = () => {
+  formRef.value.validator((valid) => {
+      // valid: 所有表单都通过校验才为true
+      // 以valid作为一个判断条件，通过才执行登录逻辑
+      if (valid) {
+        // TODO LOGIN
+
+      }
+  })
+}
+
+// 1.用户名和密码只需要通过简单的配置（复杂功能通过多个不同组件拆解）
+// 2.同意协议做的是一个自定义校验 validator: (rule, val, callback) => {}
+// 3.统一校验：点击登录，把之前的校验再做一次校验
 </script>
 
 
@@ -60,7 +79,7 @@ const rules = {
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
-              <el-button size="large" class="subBtn">点击登录</el-button>
+              <el-button size="large" @click="doLogin" class="subBtn">点击登录</el-button>
             </el-form>
           </div>
         </div>
