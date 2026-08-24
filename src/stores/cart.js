@@ -17,9 +17,14 @@ export const useCartStore = defineStore(
       }
     };
 
+    const delCart = (id) => {
+        
+    }
+
     return {
       cartList,
       addCart,
+      delCart
     };
   },
   {
