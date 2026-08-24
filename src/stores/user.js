@@ -15,10 +15,16 @@ export const useUserStore = defineStore(
       userInfo.value = res.result;
     };
 
+    // 退出时清除用户信息
+    const clearUserInfo = () => {
+      userInfo.value = {};
+    };
+
     // 返回state和action
     return {
       userInfo,
       getUserInfo,
+      clearUserInfo,
     };
   },
   {
