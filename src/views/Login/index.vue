@@ -1,49 +1,61 @@
 <script setup>
-import { ref } from 'vue'
+import { loginAPI } from "@/apis/user";
+import { ref } from "vue";
+import { ElMessage } from "element-plus";
+import "element-plus/theme-chalk/el-message.css";
+import { useRouter } from "vue-router";
+const router = useRouter();
 // 表单数据对象
 const form = ref({
-  account: '1311111111',
-  password: '123456',
-  agree: true
-})
+  account: "",
+  password: "",
+  agree: true,
+});
 
 const rules = {
-  account: [
-    { required: true, message: '用户名不能为空' }
-  ],
+  account: [{ required: true, message: "用户名不能为空" }],
   password: [
-    { required: true, message: '密码不能为空' },
-    { min: 6, max: 24, message: '密码长度要求6-14个字符' }
+    { required: true, message: "密码不能为空" },
+    { min: 6, max: 24, message: "密码长度要求6-14个字符" },
   ],
   agree: [
     {
       validator: (rule, val, callback) => {
-        return val ? callback() : new Error('请先同意协议')
-      }
-    }
-  ]
-}
-
+        return val ? callback() : new Error("请先同意协议");
+      },
+    },
+  ],
+};
 
 // 获取form实例
-const formRef = ref(null)
+const formRef = ref(null);
 
 const doLogin = () => {
-  formRef.value.validator((valid) => {
-      // valid: 所有表单都通过校验才为true
-      // 以valid作为一个判断条件，通过才执行登录逻辑
-      if (valid) {
-        // TODO LOGIN
-
+  const { account, password } = form.value;
+  formRef.value.validate(async (valid) => {
+    // valid: 所有表单都通过校验才为true
+    // 以valid作为一个判断条件，通过才执行登录逻辑
+    console.log("请求参数：", { account, password });
+    if (valid) {
+      try {
+        await loginAPI({ account, password });
+        ElMessage({ type: "success", message: "登录成功" });
+        router.replace({ path: "/" });
+      } catch (error) {
+        console.log("后端返回错误详情：", error.response?.data);
+        ElMessage({
+          type: "error",
+          message: error.response?.data?.message || "登录失败",
+        });
       }
-  })
-}
+    }
+  });
+};
 
 // 1.用户名和密码只需要通过简单的配置（复杂功能通过多个不同组件拆解）
 // 2.同意协议做的是一个自定义校验 validator: (rule, val, callback) => {}
 // 3.统一校验：点击登录，把之前的校验再做一次校验
 </script>
-
 
 <template>
   <div>
@@ -66,20 +78,28 @@ const doLogin = () => {
         </nav>
         <div class="account-box">
           <div class="form">
-            <el-form label-position="right" label-width="60px" ref="formRef" :model="form" :rules="rules"
-              status-icon>
+            <el-form
+              label-position="right"
+              label-width="60px"
+              ref="formRef"
+              :model="form"
+              :rules="rules"
+              status-icon
+            >
               <el-form-item prop="account" label="账户">
-                <el-input v-model="form.account"/>
+                <el-input v-model="form.account" />
               </el-form-item>
               <el-form-item prop="password" label="密码">
-                <el-input v-model="form.password"/>
+                <el-input v-model="form.password" />
               </el-form-item>
               <el-form-item label-width="22px" prop="agree">
-                <el-checkbox v-model="form.agree" size="large" >
+                <el-checkbox v-model="form.agree" size="large">
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
-              <el-button size="large" @click="doLogin" class="subBtn">点击登录</el-button>
+              <el-button size="large" @click="doLogin" class="subBtn"
+                >点击登录</el-button
+              >
             </el-form>
           </div>
         </div>
@@ -103,7 +123,7 @@ const doLogin = () => {
   </div>
 </template>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .login-header {
   background: #fff;
   border-bottom: 1px solid #e4e4e4;
@@ -122,7 +142,8 @@ const doLogin = () => {
       height: 132px;
       width: 100%;
       text-indent: -9999px;
-      background: url("@/assets/images/logo.png") no-repeat center 18px / contain;
+      background: url("@/assets/images/logo.png") no-repeat center 18px /
+        contain;
     }
   }
 
@@ -149,7 +170,7 @@ const doLogin = () => {
 }
 
 .login-section {
-  background: url('@/assets/images/login-bg.png') no-repeat center / cover;
+  background: url("@/assets/images/login-bg.png") no-repeat center / cover;
   height: 488px;
   position: relative;
 
@@ -199,7 +220,7 @@ const doLogin = () => {
       color: #999;
       display: inline-block;
 
-      ~a {
+      ~ a {
         border-left: 1px solid #ccc;
       }
     }
@@ -230,7 +251,7 @@ const doLogin = () => {
         position: relative;
         height: 36px;
 
-        >i {
+        > i {
           width: 34px;
           height: 34px;
           background: #cfcdcd;
@@ -275,7 +296,7 @@ const doLogin = () => {
         }
       }
 
-      >.error {
+      > .error {
         position: absolute;
         font-size: 12px;
         line-height: 28px;
