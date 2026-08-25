@@ -39,7 +39,7 @@ export const useCartStore = defineStore(
     };
 
     const isAll = computed(() =>
-        // 就是筛选出来选中的，如果全是选中的话就是isAll => true
+      // 就是筛选出来选中的，如果全是选中的话就是isAll => true
       cartList.value.every((item) => item.selected),
     );
 
@@ -48,6 +48,19 @@ export const useCartStore = defineStore(
     );
     const totalPrice = computed(() =>
       cartList.value.reduce((a, c) => a + c.count * c.price, 0),
+    );
+
+    // 已选数量
+    const selectedCount = computed(() =>
+      cartList.value
+        .filter((item) => item.selected)
+        .reduce((a, c) => a + c.count, 0),
+    );
+    // 已选择商品价钱
+    const selectedPrice = computed(() =>
+      cartList.value
+        .filter((item) => item.selected)
+        .reduce((a, c) => a + c.count * c.price, 0),
     );
 
     return {
@@ -59,6 +72,8 @@ export const useCartStore = defineStore(
       isAll,
       totalCount,
       totalPrice,
+      selectedCount,
+      selectedPrice,
     };
   },
   {
