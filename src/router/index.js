@@ -32,6 +32,11 @@ const router = createRouter({
           {
             path:'detail/:id',
             component: Detail
+          },
+          {
+            path:'cartlist',
+            // 动态导入，支持懒加载
+            component: () => import('@/views/CartList/index.vue')
           }
         ]
     },
