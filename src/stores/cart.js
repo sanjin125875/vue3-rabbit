@@ -28,6 +28,11 @@ export const useCartStore = defineStore(
 
     //  cartList.value = cartList.value.filter((item) => item.skuId !== skuId);
 
+    const singleCheck = (skuId, selected) => {
+      const item = cartList.value.find((item) => item.skuId === skuId);
+      item.selected = selected;
+    };
+
     const totalCount = computed(() =>
       cartList.value.reduce((a, c) => a + c.count, 0),
     );
@@ -41,6 +46,7 @@ export const useCartStore = defineStore(
       delCart,
       totalCount,
       totalPrice,
+      singleCheck,
     };
   },
   {
