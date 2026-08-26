@@ -28,7 +28,9 @@ export const useCartStore = defineStore(
           cartList.value = res.result;
         } else {
           // 本地：添加过 count+1，没有就直接 push
-          const item = cartList.value.find((item) => goods.skuId === item.skuId);
+          const item = cartList.value.find(
+            (item) => goods.skuId === item.skuId,
+          );
           if (item) {
             item.count += count;
           } else {
@@ -55,11 +57,18 @@ export const useCartStore = defineStore(
           cartList.value = res.result;
         } else {
           // 未登录：仅做本地过滤删除（findIndex+splice 在 -1 时会删除最后一项，改用 filter）
-          cartList.value = cartList.value.filter((item) => item.skuId !== skuId);
+          cartList.value = cartList.value.filter(
+            (item) => item.skuId !== skuId,
+          );
         }
       } finally {
         deletingCart.value = false;
       }
+    };
+
+    // 清除购物车
+    const clearCart = () => {
+      cartList.value = [];
     };
 
     const singleCheck = (skuId, selected) => {
@@ -102,6 +111,7 @@ export const useCartStore = defineStore(
       delCart,
       singleCheck,
       allCheck,
+      clearCart,
       cartList,
       isAll,
       totalCount,
