@@ -1,7 +1,9 @@
 <script setup>
-import { getCheckInfoAPI } from "@/apis/checkout";
+import { getCheckInfoAPI, createOrderAPI } from "@/apis/checkout";
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 // const defaultAddress = ref({});
 const checkInfo = ref({}); // 订单对象
 const curAddress = ref({}); // 地址对象
@@ -33,6 +35,56 @@ const confirm = () => {
 
 const cancel = () => {
   showDialog.value = false;
+};
+
+// 创建订单
+const createOrder = async () => {
+  // 1. 验证地址是否存在
+  if (!curAddress.value?.id) {
+    ElMessage.warning("请先选择收货地址");
+    return;
+  }
+
+  // 2. 验证商品是否存在
+  if (!checkInfo.value?.goods?.length) {
+    ElMessage.warning("购物车为空，请添加商品");
+    return;
+  }
+
+  try {
+    // 3. 构建订单参数
+    const orderData = {
+      deliveryTimeType: 1,
+      payType: 1,
+      payChannel: 1,
+      buyerMessage: "",
+      goods: checkInfo.value.goods.map((item) => ({
+        skuId: item.skuId,
+        count: item.count,
+      })),
+      addressId: curAddress.value.id,
+    };
+
+    console.log("提交订单参数:", orderData);
+
+    const res = await createOrderAPI(orderData);
+
+    // 兼容多种返回格式
+    const orderId = res?.data?.id || res?.result?.id || res?.id;
+
+    if (!orderId) {
+      throw new Error("创建订单失败，未返回订单ID");
+    }
+
+    // 跳转到支付页面
+    router.push({
+      path: "/pay",
+      query: { id: orderId },
+    });
+  } catch (error) {
+    console.error("创建订单失败:", error);
+    ElMessage.error(error?.message || "创建订单失败，请重试");
+  }
 };
 </script>
 
@@ -143,7 +195,9 @@ const cancel = () => {
         </div>
         <!-- 提交订单 -->
         <div class="submit">
-          <el-button type="primary" size="large">提交订单</el-button>
+          <el-button type="primary" size="large" @click="createOrder"
+            >提交订单</el-button
+          >
         </div>
       </div>
     </div>
