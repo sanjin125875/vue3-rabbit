@@ -2,7 +2,9 @@
 import { getCheckInfoAPI, createOrderAPI } from "@/apis/checkout";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useCartStore } from "@/stores/cartStore";
 
+const cartStore = useCartStore();
 const router = useRouter();
 // const defaultAddress = ref({});
 const checkInfo = ref({}); // 订单对象
@@ -85,6 +87,8 @@ const createOrder = async () => {
     console.error("创建订单失败:", error);
     ElMessage.error(error?.message || "创建订单失败，请重试");
   }
+  // 更新购物车数据
+  cartStore.updateCartList();
 };
 </script>
 
