@@ -1,47 +1,66 @@
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import { useUserStore } from "./user";
-import { insertCartAPI, findNewCartListAPI } from "@/apis/cart";
+import { insertCartAPI, findNewCartListAPI, delCartAPI } from "@/apis/cart";
 
 export const useCartStore = defineStore(
   "cart",
   () => {
     const userStore = useUserStore();
-    console.log("token:", userStore.userInfo.token);
-    const isLogin = computed(() => userStore.userInfo.token);
-    console.log("登录状态:", isLogin.value);
+    const isLogin = computed(() => !!userStore.userInfo.token);
     const cartList = ref([]);
 
+    // 提交锁：防止 addCart 被重复调用（双击或事件重复绑定导致两次 insert 接口）
+    const insertingCart = ref(false);
+
     const addCart = async (goods) => {
+      // 1) 插入中直接拦截，阻断重复调用
+      if (insertingCart.value) return;
+      insertingCart.value = true;
+
       const { skuId, count } = goods;
-      // 登录
-      if (isLogin.value) {
-        // 登录之后的加入购车逻辑
-        await insertCartAPI({ skuId, count });
-        const res = await findNewCartListAPI();
-        cartList.value = res.result;
-      } else {
-        // 添加过count+1
-        //没有添加过直接push
-        const item = cartList.value.find((item) => goods.skuId === item.skuId);
-        if (item) {
-          item.count++;
+      try {
+        // 登录
+        if (isLogin.value) {
+          // 登录之后的加入购车逻辑：先插入，再拉取最新列表
+          await insertCartAPI({ skuId, count });
+          const res = await findNewCartListAPI();
+          cartList.value = res.result;
         } else {
-          cartList.value.push(goods);
+          // 本地：添加过 count+1，没有就直接 push
+          const item = cartList.value.find((item) => goods.skuId === item.skuId);
+          if (item) {
+            item.count += count;
+          } else {
+            cartList.value.push(goods);
+          }
         }
+      } finally {
+        insertingCart.value = false;
       }
     };
 
+    // 提交锁：防止 delCart 被多次触发
+    const deletingCart = ref(false);
+
     // 删除购物车
     const delCart = async (skuId) => {
-      // 思路：
-      // 1. 找到要删除项的下标值 - splice
-      // 2. 使用数组的过滤方法 - filter
-      const idx = cartList.value.findIndex((item) => skuId === item.skuId);
-      cartList.value.splice(idx, 1);
+      if (deletingCart.value) return;
+      deletingCart.value = true;
+      try {
+        if (isLogin.value) {
+          // 登录态：先调服务端删除接口，成功后再刷新本地
+          await delCartAPI([skuId]);
+          const res = await findNewCartListAPI();
+          cartList.value = res.result;
+        } else {
+          // 未登录：仅做本地过滤删除（findIndex+splice 在 -1 时会删除最后一项，改用 filter）
+          cartList.value = cartList.value.filter((item) => item.skuId !== skuId);
+        }
+      } finally {
+        deletingCart.value = false;
+      }
     };
-
-    //  cartList.value = cartList.value.filter((item) => item.skuId !== skuId);
 
     const singleCheck = (skuId, selected) => {
       const item = cartList.value.find((item) => item.skuId === skuId);
@@ -89,6 +108,8 @@ export const useCartStore = defineStore(
       totalPrice,
       selectedCount,
       selectedPrice,
+      insertingCart,
+      deletingCart,
     };
   },
   {

@@ -30,8 +30,11 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://pcapi-xiaotuxian-front-devtest.itheima.net',
+        // 必须用 https:// —— 用 http:// 会被服务端 301 永久跳转到 https://，
+        // 导致浏览器每次请求走两遍（301 + 跟进重定向），且 301 被 disk cache 长期保存
+        target: 'https://pcapi-xiaotuxian-front-devtest.itheima.net',
         changeOrigin: true,
+        secure: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }

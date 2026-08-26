@@ -21,8 +21,13 @@ const rules = {
   ],
   agree: [
     {
+      // 统一使用 callback 风格：成功不传参，失败传 Error 给 callback
       validator: (rule, val, callback) => {
-        return val ? callback() : new Error("请先同意协议");
+        if (val) {
+          callback();
+        } else {
+          callback(new Error("请先同意协议"));
+        }
       },
     },
   ],
@@ -30,27 +35,35 @@ const rules = {
 
 // 获取form实例
 const formRef = ref(null);
+// 提交锁：防止双击或重复触发导致接口调用两次
+const submitting = ref(false);
 
-const doLogin = () => {
+const doLogin = async () => {
+  // 1) 提交中直接返回，阻断重复调用
+  if (submitting.value) return;
   const { account, password } = form.value;
-  formRef.value.validate(async (valid) => {
+  try {
+    const valid = await formRef.value.validate();
     // valid: 所有表单都通过校验才为true
-    // 以valid作为一个判断条件，通过才执行登录逻辑
-    console.log("请求参数：", { account, password });
     if (valid) {
+      submitting.value = true;
       try {
         await userStore.getUserInfo({ account, password });
         ElMessage({ type: "success", message: "登录成功" });
-        router.replace({ path: "/" });
+        // 路由完成前保持锁，确保跳转期间不会再次触发
+        await router.replace({ path: "/" });
       } catch (error) {
-        console.log("后端返回错误详情：", error.response?.data);
         ElMessage({
           type: "error",
           message: error.response?.data?.message || "登录失败",
         });
+      } finally {
+        submitting.value = false;
       }
     }
-  });
+  } catch (e) {
+    // validate 不通过时会抛错，无需处理
+  }
 };
 
 // 1.用户名和密码只需要通过简单的配置（复杂功能通过多个不同组件拆解）
@@ -98,9 +111,15 @@ const doLogin = () => {
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
-              <el-button size="large" @click="doLogin" class="subBtn"
-                >点击登录</el-button
+              <el-button
+                size="large"
+                @click="doLogin"
+                class="subBtn"
+                :loading="submitting"
+                :disabled="submitting"
               >
+                {{ submitting ? "登录中..." : "点击登录" }}
+              </el-button>
             </el-form>
           </div>
         </div>

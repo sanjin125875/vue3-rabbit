@@ -17,7 +17,7 @@ export function getBannerAPI (params = {}) {
  */
 export function getNewAPI() {
     return httpInstance({
-        url: "home/new",
+        url: "/home/new",
     });
 }
 
@@ -27,7 +27,7 @@ export function getNewAPI() {
  */
 export function getHotAPI() {
     return httpInstance({
-        url: "home/hot",
+        url: "/home/hot",
     });
 }
 

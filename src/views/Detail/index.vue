@@ -1,7 +1,7 @@
 <script setup>
 import { useDetail } from "@/views/Detail/composables/useDetail";
 import DetailHot from "./components/DetailHot.vue";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { ElMessage } from "element-plus";
 import { useCartStore } from "@/stores/cart.js";
 
@@ -11,18 +11,21 @@ const { goods } = useDetail();
 
 let skuObj = {};
 const skuChange = (sku) => {
-  console.log(sku);
   skuObj = sku;
 };
 
 // count
 const count = ref(1);
-const countChange = (count) => {
-  console.log(count);
+const countChange = (val) => {
+  count.value = val;
 };
+
+// 直接复用 store 的提交锁作为按钮 loading 状态
+const addingCart = computed(() => cartStore.insertingCart);
 
 // 添加购物车
 const addCart = () => {
+  if (addingCart.value) return;
   if (skuObj.skuId) {
     // 规则已经选择,触发action
     cartStore.addCart({
@@ -34,6 +37,10 @@ const addCart = () => {
       skuId: skuObj.skuId,
       attrsText: skuObj.specsText,
       selected: true,
+    }).then(() => {
+      ElMessage.success("已加入购物车");
+    }).catch(() => {
+      ElMessage.error("加入购物车失败");
     });
   } else {
     // 规则没有选择
@@ -131,8 +138,14 @@ const addCart = () => {
               <el-input-number v-model="count" @change="countChange" />
               <!-- 按钮组件 -->
               <div>
-                <el-button size="large" class="btn" @click="addCart">
-                  加入购物车
+                <el-button
+                  size="large"
+                  class="btn"
+                  @click="addCart"
+                  :loading="addingCart"
+                  :disabled="addingCart"
+                >
+                  {{ addingCart ? "加入中..." : "加入购物车" }}
                 </el-button>
               </div>
             </div>
