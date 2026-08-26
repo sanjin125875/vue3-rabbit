@@ -1,5 +1,4 @@
 import request from "@/utils/http";
-import { post } from "node_modules/axios/index.cjs";
 
 // 加入购物车
 export const insertCartAPI = ({ skuId, count }) => {
@@ -35,7 +34,7 @@ export const delCartAPI = (ids) => {
 export const mergeCartAPI = (data) => {
   return request({
     url: "/member/cart/merge",
-    method: post,
+    method: "POST",
     data,
   });
 };
