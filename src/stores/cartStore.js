@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
 import { defineStore } from "pinia";
-import { useUserStore } from "./user";
+import { useUserStore } from "./userStore";
 import { insertCartAPI, findNewCartListAPI, delCartAPI } from "@/apis/cart";
 
 export const useCartStore = defineStore(
@@ -24,8 +24,7 @@ export const useCartStore = defineStore(
         if (isLogin.value) {
           // 登录之后的加入购车逻辑：先插入，再拉取最新列表
           await insertCartAPI({ skuId, count });
-          const res = await findNewCartListAPI();
-          cartList.value = res.result;
+          updateCartList();
         } else {
           // 本地：添加过 count+1，没有就直接 push
           const item = cartList.value.find(
@@ -53,8 +52,7 @@ export const useCartStore = defineStore(
         if (isLogin.value) {
           // 登录态：先调服务端删除接口，成功后再刷新本地
           await delCartAPI([skuId]);
-          const res = await findNewCartListAPI();
-          cartList.value = res.result;
+          updateCartList();
         } else {
           // 未登录：仅做本地过滤删除（findIndex+splice 在 -1 时会删除最后一项，改用 filter）
           cartList.value = cartList.value.filter(
@@ -69,6 +67,13 @@ export const useCartStore = defineStore(
     // 清除购物车
     const clearCart = () => {
       cartList.value = [];
+    };
+
+    // 更新购物车列表数据
+    const updateCartList = async () => {
+      // 获取购物车最新列表信息
+      const res = await findNewCartListAPI();
+      cartList.value = res.result;
     };
 
     const singleCheck = (skuId, selected) => {
@@ -112,6 +117,7 @@ export const useCartStore = defineStore(
       singleCheck,
       allCheck,
       clearCart,
+      updateCartList,
       cartList,
       isAll,
       totalCount,

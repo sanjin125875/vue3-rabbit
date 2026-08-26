@@ -3,7 +3,7 @@ import { useDetail } from "@/views/Detail/composables/useDetail";
 import DetailHot from "./components/DetailHot.vue";
 import { computed, ref } from "vue";
 import { ElMessage } from "element-plus";
-import { useCartStore } from "@/stores/cart.js";
+import { useCartStore } from "@/stores/cartStore.js";
 
 const cartStore = useCartStore();
 
