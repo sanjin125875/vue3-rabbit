@@ -17,6 +17,9 @@ const getCheckInfo = async () => {
     (item) => item.isDefault === 0,
   );
   curAddress.value = item;
+  console.log(curAddress.value);
+  console.log(res.value);
+  console.log(checkInfo.value.goods);
 };
 
 onMounted(() => getCheckInfo());
@@ -70,9 +73,11 @@ const createOrder = async () => {
     console.log("提交订单参数:", orderData);
 
     const res = await createOrderAPI(orderData);
+    console.log("res = ", res);
 
     // 兼容多种返回格式
     const orderId = res?.data?.id || res?.result?.id || res?.id;
+    console.log("orderId = ", orderId);
 
     if (!orderId) {
       throw new Error("创建订单失败，未返回订单ID");
