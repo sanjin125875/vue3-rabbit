@@ -17,6 +17,7 @@ onMounted(() => getPayInfo());
     <div class="container">
       <!-- 支付结果 -->
       <div class="pay-result">
+        <!-- 回调函数-支付宝中的回调 $route.query.payResult === 'true' -->
         <span
           class="iconfont icon-queren2 green"
           v-if="$route.query.payResult === 'true'"
